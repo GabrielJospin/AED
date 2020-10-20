@@ -15,7 +15,7 @@ typedef struct{
 }REGISTRO;
 
 typedef struct{
-    REGISTRO A[MAX];
+    REGISTRO A[MAX+1];
     int numRegistros;
 }LISTA;
 
@@ -28,14 +28,16 @@ int tamanho(LISTA* l){
     return l->numRegistros;
 }
 
-void exibirLista(LISTA* l){
+void print(LISTA* l){
     int i = 0;
-    printf("Lista: \n ");
+    printf("Lista: \n");
     printf("|KEY \t |Peso \t |Altura \n");
     for(i=0; i<(l->numRegistros); i++){
         printf("|%i \t |%i \t |%i \n",l->A[i].chave,l->A[i].peso,l->A[i].altura);
     }
 }
+
+
 
 
 int buscaElemLista(LISTA* l,KEY ch){
@@ -46,26 +48,50 @@ int buscaElemLista(LISTA* l,KEY ch){
     return -1;
 }
 
+int buscaSentinela(LISTA* l, KEY ch){
+    l->A[l->numRegistros].chave = ch;
+    int i =0;
+    while(l->A[i].chave != ch) i++;
+    if (i != l->numRegistros)return i;
+    else return -1;
+}
 
-bool inserirElemLista(LISTA* l, REGISTRO rg, int i){
-    int j;
-    if ((l->numRegistros) == MAX || (i<0) || (i> l->numRegistros)) return false;
-    for(j=l->numRegistros; j > i; j--) l->A[j] = l->A[j-1];
-    l-> A[i] = rg;
-    l->numRegistros++;
-    return true;
+int buscaBinaria(LISTA* l, KEY ch){
+    int esq = 0;
+    int dir = l->numRegistros;
+    while(esq < dir){
+        int meio = (esq+dir)/2;
+        if(l->A[meio].chave == ch) return meio;
+        if(l->A[meio].chave >= ch)dir = meio-1;
+        if(l->A[meio].chave == ch)esq = meio+1;    
+    }
+    
+    return -1;
+}
+
+void print(LISTA* l, KEY ch){
+        int i = buscaBinaria(l,ch);
+    printf("Linha: \n");
+    printf("|KEY \t |Peso \t |Altura \n");
+    printf("|%i \t |%i \t |%i \n",l->A[i].chave,l->A[i].peso,l->A[i].altura);
+    
 }
 
 bool inserirElemLista(LISTA* l, REGISTRO rg){
-    if(l->numRegistros == MAX) return false;
+    if(l->numRegistros >= MAX) return true;
+    int pos = l->numRegistros;
+    while(  pos > 0 && l->A[pos-1].chave > rg.chave){
+        l->A[pos] = l->A[pos+1];
+        pos --;
+    }
     l->A[l->numRegistros] = rg;
     l->numRegistros++;
-    return true;
+    return false;
 }
 
 bool excluirElemLista(LISTA* l, KEY ch){
     int pos, i;
-    pos = buscaElemLista(l,ch);
+    pos = buscaBinaria(l,ch);
     if(pos == -1) return false;
     for(i=pos; i<l->numRegistros; i++) l->A[i] = l->A [i+1];
     l->numRegistros --;
@@ -75,17 +101,7 @@ bool excluirElemLista(LISTA* l, KEY ch){
 void reinicializarLista(LISTA* l){
     l->numRegistros = 0;
 }
-/*
-int ocorrencias(LISTA* l, KEY ch){
-    int ocorrencia;
 
-    for(int i =0;i<l->numRegistros;i++){
-        if(l->A[i].chave == ch)ocorrencia++;
-    }
-
-    return ocorrencia;
-}
-*/
 int ocorrencias(LISTA* l, int ch){
     int ocorrencia = 0;
 
@@ -111,60 +127,52 @@ bool identicas(LISTA* l1, LISTA *l2) {
 
 
 int main(){
-
-    //Inicializa Lista
-
     LISTA lista1;
-    inicializarLista(&lista1);
-
-
     LISTA lista2;
-    inicializarLista(&lista2);
-
-    LISTA lista3;
-    inicializarLista(&lista3);
 
     REGISTRO rg1;
-    rg1.chave = 152;
-    
+    rg1.chave =1 ;
+    rg1.altura =170;
+    rg1.peso =70;
+
     REGISTRO rg2;
-    rg2.chave = 152;
+    rg2.chave =2 ;
+    rg2.altura =180;
+    rg2.peso =90;
 
     REGISTRO rg3;
-    rg3.chave = 100;
+    rg3.chave =3 ;
+    rg3.altura =150;
+    rg3.peso =60;
 
     REGISTRO rg4;
-    rg4.chave = 152;
+    rg4.chave =4 ;
+    rg4.altura =160;
+    rg4.peso =55;
 
-    inserirElemLista(&lista1,rg1);
-    inserirElemLista(&lista1,rg2);
-    inserirElemLista(&lista1,rg3);
-    inserirElemLista(&lista1,rg4);
+    REGISTRO rg5;
+    rg5.chave =5 ;
+    rg5.altura =175;
+    rg5.peso =74;
 
-    inserirElemLista(&lista2,rg1);
-    inserirElemLista(&lista2,rg2);
-    inserirElemLista(&lista2,rg3);
-    inserirElemLista(&lista2,rg3);
 
-    inserirElemLista(&lista3,rg1);
-    inserirElemLista(&lista3,rg2);
-    inserirElemLista(&lista3,rg3);
+    inicializarLista(&lista1);
+    inicializarLista(&lista2);
 
-    LISTA  lista4;
-    inicializarLista(&lista4);
+    if (inserirElemLista(&lista1, rg1))printf("Error inserction rg1\n");;
+    inserirElemLista(&lista1, rg2);
+    inserirElemLista(&lista1, rg3);
+    inserirElemLista(&lista1, rg4);
 
-    KEY teste = 152;
 
-    printf("%i \t",tamanho(&lista1));
-    printf("%i \t",tamanho(&lista2));
-    printf("%i \t",tamanho(&lista3));
-    printf("%i \n",tamanho(&lista4));
+    inserirElemLista(&lista2, rg1);
+    inserirElemLista(&lista2, rg2);
+    inserirElemLista(&lista2, rg3);
+    inserirElemLista(&lista2, rg5);
+    
+    if(ocorrencias(&lista2,rg1.chave)>0)printf("Teste 1\n");
 
-    if(identicas(&lista1,&lista1))printf("%s\n","Deu certo 1");
-    if(!identicas(&lista1,&lista2))printf("%s\n","Deu certo 2");
-    if(!identicas(&lista1,&lista3))printf("%s\n","Deu certo 3");
-    if(!identicas(&lista1,&lista4))printf("%s\n","Deu certo 4");
-
+    if(!identicas(&lista2,&lista1))printf("Teste 2\n");
     return 0;
 }
 

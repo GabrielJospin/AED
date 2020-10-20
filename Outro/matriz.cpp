@@ -4,7 +4,7 @@
 #include <string.h>
 #include <locale.h>
 
-typedef int vetor[100][100]; // Define o Vetor como uma matriz 3x3
+typedef int vetor[100][100]; // Define o Vetor como uma matriz nxn
 typedef bool error;//Cria um booleano quando o código der errado
 
 typedef struct {
@@ -81,9 +81,9 @@ error iguala (Matriz* A, Matriz* B){
 	return true;
 }
 
-void neutro (int n, int m, Matriz* N){
+void neutro (int n, Matriz* N){
 	N->n = n;
-	N->m = m;
+	N->m =n ;
 	for(int i = 0; i<N->n; i++){
 		for(int j = 0; j<N->m;j++){
 			if(i==j) N->V[i][j] =1;
@@ -131,7 +131,7 @@ int main(){
 	A.m=3;
 
 	Matriz B;
-	neutro(3,3,&B);
+	neutro(3,&B);
 	printf("%d \n",SomatoriaVetor(A.V[1],3));
 	printf("%s\n", "Inicio dos testes" );
 	print(&B);
